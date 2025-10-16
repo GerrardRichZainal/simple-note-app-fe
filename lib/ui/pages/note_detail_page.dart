@@ -1,7 +1,7 @@
-// lib/ui/pages/note_detail_page.dart
+// lib/pages/note_detail_page.dart
 import 'package:flutter/material.dart';
 import '../../data/models/note_model.dart';
-import 'note_update_page.dart';
+import 'edit_note_page.dart'; // ✅ Import EditNotePage, bukan NoteUpdatePage
 
 class NoteDetailPage extends StatelessWidget {
   final Note note;
@@ -24,7 +24,7 @@ class NoteDetailPage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => UpdateNotePage(note: note),
+                  builder: (context) => EditNotePage(note: note), // ✅ Gunakan EditNotePage
                 ),
               );
             },
@@ -45,12 +45,33 @@ class NoteDetailPage extends StatelessWidget {
             ),
             const SizedBox(height: 16.0),
             Text(
-              note.body,
+              note.content,
               style: const TextStyle(fontSize: 16.0),
+            ),
+            const SizedBox(height: 16.0),
+            // Optional: Tambahkan info timestamp
+            Text(
+              'Created: ${_formatDate(note.createdAt)}',
+              style: const TextStyle(
+                fontSize: 12.0,
+                color: Colors.grey,
+              ),
+            ),
+            Text(
+              'Updated: ${_formatDate(note.updatedAt)}',
+              style: const TextStyle(
+                fontSize: 12.0,
+                color: Colors.grey,
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  // Helper method untuk format tanggal
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
   }
 }

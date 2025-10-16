@@ -1,4 +1,4 @@
-// lib/pages/note_add_page.dart
+// lib/pages/edit_note_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/note_bloc.dart';
@@ -6,22 +6,30 @@ import '../../bloc/note_event.dart';
 import '../../bloc/note_state.dart';
 import '../../data/models/note_model.dart';
 
-class AddNotePage extends StatefulWidget {
-  const AddNotePage({super.key});
+class EditNotePage extends StatefulWidget {
+  final Note note;
+  const EditNotePage({super.key, required this.note});
 
   @override
-  State<AddNotePage> createState() => _AddNotePageState();
+  State<EditNotePage> createState() => _EditNotePageState();
 }
 
-class _AddNotePageState extends State<AddNotePage> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _contentController = TextEditingController();
+class _EditNotePageState extends State<EditNotePage> {
+  late TextEditingController _titleController;
+  late TextEditingController _contentController;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.note.title);
+    _contentController = TextEditingController(text: widget.note.content);
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<NoteBloc, NoteState>(
       listener: (context, state) {
-        if (state is NoteLoaded) { // ✅ Gunakan NoteLoaded, bukan NoteAdded
+        if (state is NoteLoaded) { // ✅ Gunakan NoteLoaded, bukan NoteUpdated
           Navigator.pop(context);
         }
         if (state is NoteError) {
@@ -32,16 +40,11 @@ class _AddNotePageState extends State<AddNotePage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Add Note'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
-          ),
+          title: const Text('Edit Note'),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextField(
                 controller: _titleController,
@@ -50,7 +53,7 @@ class _AddNotePageState extends State<AddNotePage> {
                   border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 16),
               Expanded(
                 child: TextField(
                   controller: _contentController,
@@ -64,7 +67,7 @@ class _AddNotePageState extends State<AddNotePage> {
                   textAlignVertical: TextAlignVertical.top,
                 ),
               ),
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -75,19 +78,19 @@ class _AddNotePageState extends State<AddNotePage> {
                       );
                       return;
                     }
-                    
-                    final note = Note(
-                      id: DateTime.now().millisecondsSinceEpoch.toString(),
+
+                    final updatedNote = Note(
+                      id: widget.note.id, // ✅ Pertahankan ID yang sama
                       title: _titleController.text,
                       content: _contentController.text,
-                      createdAt: DateTime.now(),
-                      updatedAt: DateTime.now(),
+                      createdAt: widget.note.createdAt, // ✅ Pertahankan createdAt
+                      updatedAt: DateTime.now(), // ✅ Update timestamp
                     );
 
-                    // ✅ Gunakan AddNoteEvent
-                    context.read<NoteBloc>().add(AddNoteEvent(note));
+                    // ✅ Gunakan UpdateNoteEvent dengan 2 parameter
+                    context.read<NoteBloc>().add(UpdateNoteEvent(widget.note.id, updatedNote));
                   },
-                  child: const Text('Add Note'),
+                  child: const Text('Save Changes'),
                 ),
               ),
             ],

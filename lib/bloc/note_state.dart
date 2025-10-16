@@ -2,27 +2,25 @@
 import 'package:meta/meta.dart';
 import '../data/models/note_model.dart';
 
-// 🚫 HAPUS: part of 'note_bloc.dart';
-// ✅ BIARKAN SEPERTI INI
-
 @immutable
 abstract class NoteState {}
 
-class NoteInitialState extends NoteState {}
+// State awal
+class NoteInitial extends NoteState {}
 
-class NoteLoadingState extends NoteState {}
+// State saat memuat data
+class NoteLoading extends NoteState {}
 
-class NotesLoadedState extends NoteState {
+// State saat data berhasil dimuat
+class NoteLoaded extends NoteState {
   final List<Note> notes;
-  NotesLoadedState(this.notes);
+
+  NoteLoaded(this.notes);
 }
 
-class NoteOperationSuccessState extends NoteState {
+// State saat terjadi error
+class NoteError extends NoteState {
   final String message;
-  NoteOperationSuccessState(this.message);
-}
 
-class NoteErrorState extends NoteState {
-  final String message;
-  NoteErrorState(this.message);
+  NoteError(this.message);
 }

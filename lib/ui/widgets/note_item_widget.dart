@@ -25,7 +25,11 @@ class NoteItemWidget extends StatelessWidget {
         note.title,
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
-      subtitle: Text(note.body),
+      subtitle: Text(
+        note.content, // Ganti 'body' dengan 'content'
+        maxLines: 2,
+        overflow: TextOverflow.ellipsis,
+      ),
       onTap: onTap,
       onLongPress: onLongPress,
       leading: isSelectionMode

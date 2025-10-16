@@ -2,63 +2,75 @@
 class Note {
   final String id;
   final String title;
-  final String body;
+  final String content; // Pastikan ini ada, bukan 'body'
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
-  const Note({
+  Note({
     required this.id,
     required this.title,
-    required this.body,
+    required this.content, // Ini yang harus digunakan
+    required this.createdAt,
+    required this.updatedAt,
   });
 
+  // Factory constructor untuk fromJson
   factory Note.fromJson(Map<String, dynamic> json) {
     return Note(
-      id: json['id']?.toString() ?? json['ID']?.toString() ?? '',
+      id: json['id'] ?? '',
       title: json['title'] ?? '',
-      body: json['body'] ?? '',
+      content: json['content'] ?? '', // Pastikan menggunakan 'content'
+      createdAt: DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
+      updatedAt: DateTime.parse(json['updatedAt'] ?? DateTime.now().toIso8601String()),
     );
   }
 
+  // Method toJson untuk konversi ke Map
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'title': title,
-      'body': body,
+      'content': content, // Pastikan menggunakan 'content'
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
+  // Copy with method untuk update
   Note copyWith({
     String? id,
     String? title,
-    String? body,
+    String? content, // Pastikan menggunakan 'content'
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return Note(
       id: id ?? this.id,
       title: title ?? this.title,
-      body: body ?? this.body,
+      content: content ?? this.content, // Pastikan menggunakan 'content'
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
+  
     return other is Note &&
         other.id == id &&
         other.title == title &&
-        other.body == body;
+        other.content == content && // Pastikan menggunakan 'content'
+        other.createdAt == createdAt &&
+        other.updatedAt == updatedAt;
   }
 
   @override
-  int get hashCode => id.hashCode ^ title.hashCode ^ body.hashCode;
-}
-
-// Helper class untuk compare list
-class ListEquality {
-  bool equals<T>(List<T>? list1, List<T>? list2) {
-    if (identical(list1, list2)) return true;
-    if (list1 == null || list2 == null) return false;
-    if (list1.length != list2.length) return false;
-    for (int i = 0; i < list1.length; i++) {
-      if (list1[i] != list2[i]) return false;
-    }
-    return true;
+  int get hashCode {
+    return id.hashCode ^
+        title.hashCode ^
+        content.hashCode ^ // Pastikan menggunakan 'content'
+        createdAt.hashCode ^
+        updatedAt.hashCode;
   }
 }
